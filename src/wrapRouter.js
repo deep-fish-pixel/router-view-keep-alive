@@ -2,7 +2,6 @@ let keepAlive = true;
 
 export default {
   getKeepAlive() {
-    debugger
     return keepAlive;
   },
   setKeepAlive(useKeepAlive) {

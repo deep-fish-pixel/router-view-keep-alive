@@ -49,6 +49,7 @@ disabled属性，用来设置禁止使用页面缓存。
 | exclude | 任何名称匹配的组件都不会被缓存 | RegExp  | - | - |
 | max | 最多可以缓存多少组件实例 | Number  | - | - |
 
+### [Example](https://codesandbox.io/s/vue3-router-view-keep-alive-d2o4k5)
 
 ### vue-router接口扩展
 

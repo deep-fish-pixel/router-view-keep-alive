@@ -1,6 +1,6 @@
 {
   "name": "router-view-keep-alive",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "keywords": ["vue3", "keep-alive", "router-view", "cache"],
   "scripts": {
     "build": "rollup --config",
