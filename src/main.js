@@ -47,9 +47,9 @@ const Main = {
       if (this.hasDestroyed) {
         return true;
       }
-      this.$nextTick(() => {
+      setTimeout(() => {
         wrapRouter.setKeepAlive(true);
-      });
+      }, 10);
     }
   },
 
