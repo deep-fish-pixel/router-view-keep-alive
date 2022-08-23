@@ -1,6 +1,6 @@
 {
   "name": "router-view-keep-alive",
-  "version": "1.0.5",
+  "version": "1.0.7",
   "keywords": ["vue3", "keep-alive", "router-view", "cache"],
   "scripts": {
     "build": "rollup --config",
@@ -11,9 +11,9 @@
     "vue": "^3.0.0",
     "vue-router": "^4.0.0-0"
   },
-  "homepage": "https://github.com/maweimaweima/router-view-keep-alive#readme",
+  "homepage": "https://github.com/deep-fish-pixel/router-view-keep-alive#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/maweimaweima/router-view-keep-alive.git"
+    "url": "git+https://github.com/deep-fish-pixel/router-view-keep-alive.git"
   }
 }
