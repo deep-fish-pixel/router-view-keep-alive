@@ -17,29 +17,24 @@ const Main = {
     exclude: RegExp,
     max: Number,
     name: String,
-    disabled: Boolean
+    cache: Boolean,
+    defaultCache: Boolean,
   },
   data() {
+    wrapRouter.setDefaultCached(this.defaultCache);
     return {
       hasDestroyed: false,
       current: null,
+      firstLoadPage: true,
     };
   },
-
   methods: {
     before(to, from, next) {
       if (this.hasDestroyed) {
         return next();
       }
-      const keepAlive = this.$refs.keepAlive;
-      if (!wrapRouter.getKeepAlive() && to.meta.keepAlive) {
-        const cache = keepAlive && keepAlive.$ && keepAlive.$.__v_cache;
-        if (cache) {
-          this.current = cache.get(to.name);
-          if (this.current) {
-            cache.delete(to.name);
-          }
-        }
+      if (!wrapRouter.getKeepAlive()) {
+        this.deleteCache(to);
       }
       next();
     },
@@ -50,11 +45,20 @@ const Main = {
       setTimeout(() => {
         wrapRouter.setKeepAlive(true);
       }, 10);
+    },
+    deleteCache(router){
+      const keepAlive = this.$refs.keepAlive;
+      const vCache = keepAlive && keepAlive.$ && keepAlive.$.__v_cache;
+      if (vCache) {
+        this.current = vCache.get(router.fullPath);
+        if (this.current) {
+          vCache.delete(router.fullPath);
+        }
+      }
     }
   },
 
   created() {
-    wrapRouter.wrap(this.$router);
     this.$router.beforeEach(this.before);
     this.$router.afterEach(this.after);
   },
@@ -69,26 +73,53 @@ const Main = {
       ref: 'keepAlive'
     };
     const $route = this.$route;
-    const isCached = !this.disabled;
+    const cache = this.cache;
+    if (!cache) {
+      this.deleteCache($route);
+    }
 
     return createVNode(resolveComponent('router-view'), {
         name: this.name
       }, {
         default: withCtx(function ({ Component }) {
-          return [(openBlock(), createBlock(KeepAlive, keepAliveProps, [isCached ? (openBlock(), createBlock(resolveDynamicComponent(Component), {
-              key: $route.name
-            })) : createCommentVNode("v-if", true)], 1032
-            , ["include", "exclude", "max"])), !isCached ? (openBlock(), createBlock(resolveDynamicComponent(Component), {
-            key: $route.name
-          })) :createCommentVNode("v-if", true)];
+          return [
+            (
+              openBlock(),
+              createBlock(
+                KeepAlive,
+                keepAliveProps,
+                [
+                  cache ? (openBlock(), createBlock(resolveDynamicComponent(Component), {
+                      key: $route.fullPath
+                    })) :
+                    createCommentVNode("v-if", true)
+                ],
+                1032,
+                ["include", "exclude", "max"]
+              )
+            ),
+            !cache ? (
+              openBlock(),
+              createBlock(resolveDynamicComponent(Component), {
+                key: $route.fullPath
+              })
+            ) : createCommentVNode("v-if", true)
+          ];
         })
-      }, 8
-      , ["name"]);
+      },
+      8,
+      ["name"]
+    );
   }
 };
 
 export default {
   install: (app) => {
     app.component(Main.name, Main);
+    if(!app.config.globalProperties.$router){
+      console.error('router-view-keep-alive should install after vue-router! Otherwise, it may cause partial failure.');
+      return;
+    }
+    wrapRouter.wrap(app.config.globalProperties.$router);
   }
 };

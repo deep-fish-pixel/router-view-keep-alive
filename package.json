@@ -1,9 +1,14 @@
 {
   "name": "router-view-keep-alive",
-  "version": "1.0.7",
-  "keywords": ["vue3", "keep-alive", "router-view", "cache"],
+  "version": "1.2.1",
+  "keywords": [
+    "vue3",
+    "keep-alive",
+    "router-view",
+    "cache"
+  ],
   "scripts": {
-    "build": "rollup --config",
+    "build": "rollup --config --bundleConfigAsCjs",
     "pub": "npm run build && npm publish"
   },
   "main": "./lib/main.js",

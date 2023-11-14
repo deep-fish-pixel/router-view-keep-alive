@@ -1,8 +1,15 @@
 const objectClass = Object;
-// 解决跨微前端问题
+// 解决通讯问题
 objectClass.__keepAlive = true;
+var defaultCache = false;
 
-export default {
+const wrapRouter = {
+  getDefaultCached() {
+    return defaultCache;
+  },
+  setDefaultCached(value) {
+    defaultCache = value;
+  },
   getKeepAlive() {
     return objectClass.__keepAlive;
   },
@@ -10,32 +17,53 @@ export default {
     objectClass.__keepAlive = useKeepAlive;
   },
   wrap(router) {
-    const { push, go } = router;
+    const { push, replace, go } = router;
+
+    function checkSetCache(location) {
+      return location && (typeof location.cache === 'boolean' || typeof location.keepAlive === 'boolean');
+    }
+
+    function setCache(location) {
+      if (location && typeof location.cache === 'boolean') {
+        wrapRouter.setKeepAlive(location.cache);
+      } else if (location && (typeof location.keepAlive === 'boolean')) {
+        wrapRouter.setKeepAlive(location.keepAlive);
+      }
+    }
 
     router.push = function(...args) {
       const location = args[0];
 
-      if (location && typeof location.keepAlive === 'boolean') {
-        objectClass.__keepAlive = location.keepAlive;
+      if (checkSetCache(location)) {
+        setCache(location);
       } else {
-        objectClass.__keepAlive = false;
+        wrapRouter.setKeepAlive(wrapRouter.getDefaultCached());
       }
       return push.apply(this, args);
     };
-    router.back = function(options) {
-      if (options && typeof options.keepAlive === 'boolean') {
-        objectClass.__keepAlive = options.keepAlive;
+    router.replace = function(...args) {
+      const location = args[0];
+
+      if (checkSetCache(location)) {
+        setCache(location);
+      } else {
+        wrapRouter.setKeepAlive(wrapRouter.getDefaultCached());
       }
-      return go.apply(this, [-1]);
+      return replace.apply(this, args);
     };
-    router.go = function(num, options) {
-      if (num > 0) {
-        objectClass.__keepAlive = false;
-      }
-      if (options && typeof options.keepAlive === 'boolean') {
-        objectClass.__keepAlive = options.keepAlive;
-      }
+    router.back = function(options = { cache: true }) {
+      wrapRouter.setKeepAlive(!!options.cache);
+      return go.apply(this, [-1, { cache: !!options.cache }]);
+    };
+    router.forward = function(options = { cache: true }) {
+      wrapRouter.setKeepAlive(!!options.cache);
+      return go.apply(this, [1, { cache: !!options.cache }]);
+    };
+    router.go = function(num, options = { cache: true }) {
+      wrapRouter.setKeepAlive(!!options.cache);
       return go.apply(this, [num]);
     };
   }
 };
+
+export default wrapRouter;
