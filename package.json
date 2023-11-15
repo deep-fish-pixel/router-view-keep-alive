@@ -1,6 +1,6 @@
 {
   "name": "router-view-keep-alive",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "keywords": [
     "vue3",
     "keep-alive",
