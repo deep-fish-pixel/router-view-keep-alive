@@ -1,7 +1,7 @@
 # router-view-keep-alive  [中文](./README-CH.md)
 Extend vue3 keep-alive and router-view, add the function of automatically judging whether to use the cache.
 
-You can use [vite-app-pro](https://github.com/deep-fish-pixel/create-vite-app) cli to create template project，keep-alive-router-view was built in project，convenient experience and use。
+You can use [vite-app-pro](https://github.com/deep-fish-pixel/create-vite-app) cli to create template project，router-view-keep-alive was built in project，convenient experience and use。
 
 Support for vue2 [Click here](https://github.com/deep-fish-pixel/keep-alive-vue2)
 
